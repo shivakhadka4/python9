@@ -70,41 +70,43 @@ def main() -> None:
     print("Space Mission Crew Validation")
     print("=" * 41)
 
+    valid_payload: dict[str, object] = {
+        "mission_id": "M2024_MARS",
+        "mission_name": "Mars Colony Establishment",
+        "destination": "Mars",
+        "launch_date": "2026-11-25T12:00:00Z",
+        "duration_days": 900,
+        "budget_millions": 2500.0,
+        "crew": [
+            CrewMember(
+                member_id="CM01",
+                name="Sarah Connor",
+                rank=Rank.COMMANDER,
+                age=42,
+                specialization="Mission Command",
+                years_experience=15,
+            ),
+            CrewMember(
+                member_id="CM02",
+                name="John Smith",
+                rank=Rank.LIEUTENANT,
+                age=34,
+                specialization="Navigation",
+                years_experience=8,
+            ),
+            CrewMember(
+                member_id="CM03",
+                name="Alice Johnson",
+                rank=Rank.OFFICER,
+                age=29,
+                specialization="Engineering",
+                years_experience=3,
+            ),
+        ],
+    }
+
     try:
-        mission = SpaceMission(
-            mission_id="M2024_MARS",
-            mission_name="Mars Colony Establishment",
-            destination="Mars",
-            launch_date="2026-11-25T12:00:00Z",
-            duration_days=900,
-            budget_millions=2500.0,
-            crew=[
-                CrewMember(
-                    member_id="CM01",
-                    name="Sarah Connor",
-                    rank=Rank.COMMANDER,
-                    age=42,
-                    specialization="Mission Command",
-                    years_experience=15,
-                ),
-                CrewMember(
-                    member_id="CM02",
-                    name="John Smith",
-                    rank=Rank.LIEUTENANT,
-                    age=34,
-                    specialization="Navigation",
-                    years_experience=8,
-                ),
-                CrewMember(
-                    member_id="CM03",
-                    name="Alice Johnson",
-                    rank=Rank.OFFICER,
-                    age=29,
-                    specialization="Engineering",
-                    years_experience=3,
-                ),
-            ],
-        )
+        mission = SpaceMission.model_validate(valid_payload)
         print("Valid mission created:")
         print(f"Mission: {mission.mission_name}")
         print(f"ID: {mission.mission_id}")
@@ -122,37 +124,38 @@ def main() -> None:
     print("=" * 41)
     print("Expected validation error:")
 
+    invalid_payload: dict[str, object] = {
+        "mission_id": "M2024_FAIL",
+        "mission_name": "Orbital Survey",
+        "destination": "Europa",
+        "launch_date": "2026-12-01T09:00:00Z",
+        "duration_days": 120,
+        "budget_millions": 500.0,
+        "crew": [
+            CrewMember(
+                member_id="CM04",
+                name="Bob Lee",
+                rank=Rank.LIEUTENANT,
+                age=31,
+                specialization="Sensors",
+                years_experience=6,
+            ),
+            CrewMember(
+                member_id="CM05",
+                name="Eve Park",
+                rank=Rank.OFFICER,
+                age=27,
+                specialization="Biology",
+                years_experience=5,
+            ),
+        ],
+    }
+
     try:
-        SpaceMission(
-            mission_id="M2024_FAIL",
-            mission_name="Orbital Survey",
-            destination="Europa",
-            launch_date="2026-12-01T09:00:00Z",
-            duration_days=120,
-            budget_millions=500.0,
-            crew=[
-                CrewMember(
-                    member_id="CM04",
-                    name="Bob Lee",
-                    rank=Rank.LIEUTENANT,
-                    age=31,
-                    specialization="Sensors",
-                    years_experience=6,
-                ),
-                CrewMember(
-                    member_id="CM05",
-                    name="Eve Park",
-                    rank=Rank.OFFICER,
-                    age=27,
-                    specialization="Biology",
-                    years_experience=5,
-                ),
-            ],
-        )
+        SpaceMission.model_validate(invalid_payload)
     except ValidationError as exc:
         for err in exc.errors():
-            message = err["msg"].removeprefix("Value error, ")
-            print(message)
+            print(err["msg"].removeprefix("Value error, "))
 
 
 if __name__ == "__main__":

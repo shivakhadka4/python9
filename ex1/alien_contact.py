@@ -51,17 +51,19 @@ def main() -> None:
     print("Alien Contact Log Validation")
     print("=" * 38)
 
+    valid_payload: dict[str, object] = {
+        "contact_id": "AC_2024_001",
+        "timestamp": "2024-06-15T22:30:00Z",
+        "location": "Area 51, Nevada",
+        "contact_type": ContactType.RADIO,
+        "signal_strength": 8.5,
+        "duration_minutes": 45,
+        "witness_count": 5,
+        "message_received": "Greetings from Zeta Reticuli",
+    }
+
     try:
-        report = AlienContact(
-            contact_id="AC_2024_001",
-            timestamp="2024-06-15T22:30:00Z",
-            location="Area 51, Nevada",
-            contact_type=ContactType.RADIO,
-            signal_strength=8.5,
-            duration_minutes=45,
-            witness_count=5,
-            message_received="Greetings from Zeta Reticuli",
-        )
+        report = AlienContact.model_validate(valid_payload)
         print("Valid contact report:")
         print(f"ID: {report.contact_id}")
         print(f"Type: {report.contact_type.value}")
@@ -78,19 +80,21 @@ def main() -> None:
     print("=" * 38)
     print("Expected validation error:")
 
+    invalid_payload: dict[str, object] = {
+        "contact_id": "AC_2024_002",
+        "timestamp": "2024-06-16T01:15:00Z",
+        "location": "Sedona, Arizona",
+        "contact_type": ContactType.TELEPATHIC,
+        "signal_strength": 4.2,
+        "duration_minutes": 20,
+        "witness_count": 1,
+    }
+
     try:
-        AlienContact(
-            contact_id="AC_2024_002",
-            timestamp="2024-06-16T01:15:00Z",
-            location="Sedona, Arizona",
-            contact_type=ContactType.TELEPATHIC,
-            signal_strength=4.2,
-            duration_minutes=20,
-            witness_count=1,
-        )
+        AlienContact.model_validate(invalid_payload)
     except ValidationError as exc:
         for err in exc.errors():
-            print(err["msg"])
+            print(err["msg"].removeprefix("Value error, "))
 
 
 if __name__ == "__main__":
