@@ -4,8 +4,6 @@ from pydantic import BaseModel, Field, ValidationError
 
 
 class SpaceStation(BaseModel):
-    """Validated vital telemetry model for a space station."""
-
     station_id: str = Field(..., min_length=3, max_length=10)
     name: str = Field(..., min_length=1, max_length=50)
     crew_size: int = Field(..., ge=1, le=20)
@@ -17,7 +15,6 @@ class SpaceStation(BaseModel):
 
 
 def main() -> None:
-    """Demonstrate valid space station creation and validation errors."""
     print("Space Station Data Validation")
     print("=" * 40)
 
@@ -31,7 +28,6 @@ def main() -> None:
     }
 
     try:
-        # Pydantic coerces ISO-8601 string timestamps into datetime objects.
         station = SpaceStation.model_validate(valid_data)
         status_text = "Operational" if station.is_operational else "Non-operational"
         print("Valid station created:")
